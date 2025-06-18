@@ -1,0 +1,7 @@
+flutter:
+  generate: true
+  localization:
+    arb-dir: lib/src/localization
+    template-arb-file: app_en.arb
+    output-localization-file: app_localizations.dart
+    synthetic-package: false # Tắt synthetic package để tránh deprecated warning

@@ -1,0 +1,2 @@
+C:/GitHub/glucose_app/android/app/.cxx/Debug/6v1o5s44/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/GitHub/glucose_app/android/app/.cxx/Debug/6v1o5s44/armeabi-v7a/CMakeFiles/rebuild_cache.dir
