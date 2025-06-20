@@ -259,157 +259,143 @@ class DatabaseHelper {
     final List<HealthRecord> records = [];
 
     for (final map in maps) {
-      print('Processing record: ${map['type']}'); // Debug log
-      print('Record data: $map'); // Debug log
-      
-      // Get tags for this record
-      final tags = await db.query(
+      final recordId = map['id'] as int;
+      final recordType = map['type'] as String;
+
+      // Fetch tags for the current record
+      final List<Map<String, dynamic>> tagMaps = await db.query(
         'tags',
         where: 'record_id = ? AND record_type = ?',
-        whereArgs: [map['id'], map['type']],
+        whereArgs: [recordId, recordType],
       );
-      print('Found ${tags.length} tags for record ${map['id']}'); // Debug log
+      final List<String> tags = tagMaps.map((tagMap) => tagMap['tag'] as String).toList();
 
-      // Convert tags to list, filtering out any empty tags
-      final tagList = tags
-          .map((t) => t['tag'] as String)
-          .where((tag) => tag.isNotEmpty)
-          .toList();
-      
-      print('Processed tags for record: $tagList'); // Debug log
-      final date = DateTime.parse(map['date'] as String);
-      final note = map['note'] as String?;
-
-      try {
-        switch (map['type']) {
-          case 'GlucoseRecord':
-            records.add(HealthRecord.glucose(
-              id: map['id'] as int,
-              glucose: map['glucose'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'WeightRecord':
-            records.add(HealthRecord.weight(
-              id: map['id'] as int,
-              weight: map['weight'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'BloodPressureRecord':
-            records.add(HealthRecord.bloodPressure(
-              id: map['id'] as int,
-              systolic: map['systolic'] as double,
-              diastolic: map['diastolic'] as double,
-              heartRate: map['heart_rate'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'InsulinRecord':
-            records.add(HealthRecord.insulin(
-              id: map['id'] as int,
-              units: map['units'] as double,
-              insulinName: map['insulin_name'] as String,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'MedicationRecord':
-            records.add(HealthRecord.medication(
-              id: map['id'] as int,
-              medicationName: map['medication_name'] as String,
-              medicationTime: DateTime.parse(map['medication_time'] as String),
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'CarbsRecord':
-            records.add(HealthRecord.carbs(
-              id: map['id'] as int,
-              carbohydrates: map['carbohydrates'] as double,
-              food: map['food'] as String,
-              fat: map['fat'] as double,
-              protein: map['protein'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'TemperatureRecord':
-            records.add(HealthRecord.temperature(
-              id: map['id'] as int,
-              temperature: map['temperature'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'A1CRecord':
-            records.add(HealthRecord.a1c(
-              id: map['id'] as int,
-              a1c: map['a1c'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'ExerciseRecord':
-            records.add(HealthRecord.exercise(
-              id: map['id'] as int,
-              exerciseType: map['exercise_type'] as String,
-              duration: Duration(minutes: map['duration'] as int),
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'OxygenRecord':
-            records.add(HealthRecord.oxygen(
-              id: map['id'] as int,
-              oxygen: map['oxygen'] as double,
-              heartRate: map['heart_rate'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'NoteRecord':
-            records.add(HealthRecord.note(
-              id: map['id'] as int,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          case 'KetonesRecord':
-            records.add(HealthRecord.ketones(
-              id: map['id'] as int,
-              ketones: map['ketones'] as double,
-              date: date,
-              note: note,
-              tags: tagList,
-            ));
-            break;
-          default:
-            print('Unknown record type: ${map['type']}'); // Debug log
-            break;
-        }
-        print('Successfully processed record of type ${map['type']}'); // Debug log
-      } catch (e) {
-        print('Error processing record: $e'); // Debug log
-        print('Record data that caused error: $map'); // Debug log
+      // Create HealthRecord based on type
+      switch (recordType) {
+        case 'GlucoseRecord':
+          records.add(HealthRecord.glucose(
+            id: recordId,
+            glucose: map['glucose'] as double,
+            tags: tags,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+          ));
+          break;
+        case 'WeightRecord':
+          records.add(HealthRecord.weight(
+            id: recordId,
+            weight: map['weight'] as double,
+            tags: tags,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+          ));
+          break;
+        case 'BloodPressureRecord':
+          records.add(HealthRecord.bloodPressure(
+            id: recordId,
+            systolic: map['systolic'] as double,
+            diastolic: map['diastolic'] as double,
+            heartRate: map['heart_rate'] as double,
+            tags: tags,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+          ));
+          break;
+        case 'InsulinRecord':
+          records.add(HealthRecord.insulin(
+            id: recordId,
+            units: map['units'] as double,
+            insulinName: map['insulin_name'] as String,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'MedicationRecord':
+          records.add(HealthRecord.medication(
+            id: recordId,
+            medicationName: map['medication_name'] as String,
+            medicationTime: DateTime.parse(map['medication_time'] as String),
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'CarbsRecord':
+          records.add(HealthRecord.carbs(
+            id: recordId,
+            carbohydrates: map['carbohydrates'] as double,
+            food: map['food'] as String,
+            fat: map['fat'] as double,
+            protein: map['protein'] as double,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'TemperatureRecord':
+          records.add(HealthRecord.temperature(
+            id: recordId,
+            temperature: map['temperature'] as double,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'A1CRecord':
+          records.add(HealthRecord.a1c(
+            id: recordId,
+            a1c: map['a1c'] as double,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'ExerciseRecord':
+          records.add(HealthRecord.exercise(
+            id: recordId,
+            exerciseType: map['exercise_type'] as String,
+            duration: Duration(minutes: map['duration'] as int),
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'OxygenRecord':
+          records.add(HealthRecord.oxygen(
+            id: recordId,
+            oxygen: map['oxygen'] as double,
+            heartRate: map['heart_rate'] as double,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'NoteRecord':
+          records.add(HealthRecord.note(
+            id: recordId,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        case 'KetonesRecord':
+          records.add(HealthRecord.ketones(
+            id: recordId,
+            ketones: map['ketones'] as double,
+            date: DateTime.parse(map['date'] as String),
+            note: map['note'] as String?,
+            tags: tags,
+          ));
+          break;
+        default:
+          print('Unknown record type: $recordType'); // Debug log
+          break;
       }
+      print('Successfully processed record of type $recordType'); // Debug log
     }
 
-    print('Returning ${records.length} processed records'); // Debug log
+    print('Finished getAllRecords. Found ${records.length} records.'); // Debug log
     return records;
   }
 

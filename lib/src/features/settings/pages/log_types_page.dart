@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/src/core/utils/values/colors.dart';
 import 'package:flutter_app/src/core/utils/values/styles.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LogTypesPage extends StatefulWidget {

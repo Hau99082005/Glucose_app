@@ -12,7 +12,7 @@ import 'package:flutter_app/src/features/medications/providers/medication_provid
 import 'package:flutter_app/src/core/services/preferences_service.dart';
 
 // Global navigator key for accessing context from anywhere
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>(); 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
